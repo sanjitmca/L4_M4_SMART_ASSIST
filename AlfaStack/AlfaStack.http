@@ -1,0 +1,6 @@
+@AlfaStack_HostAddress = http://localhost:5042
+
+GET {{AlfaStack_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

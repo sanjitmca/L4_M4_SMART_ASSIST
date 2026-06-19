@@ -1,5 +1,4 @@
 <Solution>
-  <Project Path="AlfaStack/AlfaStack.csproj" />
   <Project Path="SmartAssist.Console/SmartAssist.Console.csproj" />
   <Project Path="SmartAssist.Domain/SmartAssist.Domain.csproj" />
   <Project Path="SmartAssist.Repository/SmartAssist.Repository.csproj" />

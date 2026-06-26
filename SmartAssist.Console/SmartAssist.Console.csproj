@@ -8,7 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SmartAssist.Repository\SmartAssist.Repository.csproj" />
     <ProjectReference Include="..\SmartAssist.Services\SmartAssist.Services.csproj" />
   </ItemGroup>
 

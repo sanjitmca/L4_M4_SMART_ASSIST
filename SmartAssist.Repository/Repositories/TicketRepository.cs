@@ -7,29 +7,14 @@ namespace SmartAssist.Repository.Repositories
     {
         private readonly List<Ticket> _tickets = [];
 
-        // Task (not Task<T>): AddAsync performs a write and returns nothing
-        public async Task AddAsync(Ticket ticket)
+        public void Add(Ticket ticket)
         {
             _tickets.Add(ticket);
-            await Task.CompletedTask;   // Placeholder for real async I/O
         }
-
-        // Task<List<Ticket>>: returns a value — the full list of tickets
-        public async Task<List<Ticket>> GetAllAsync()
+        public List<Ticket> GetAll() => _tickets;
+        public Ticket? Get(int id) => _tickets.FirstOrDefault(x => x.TicketId == id);
+        public void Update(Ticket ticket)
         {
-            return await Task.FromResult(_tickets);
-        }
-
-        // Task<Ticket?>: nullable — returns null when no ticket with that id exists
-        public async Task<Ticket?> GetAsync(int id)
-        {
-            return await Task.FromResult(
-                _tickets.FirstOrDefault(x => x.TicketId == id));
-        }
-
-        public async Task UpdateAsync(Ticket ticket)
-        {
-            await Task.CompletedTask;   // In-memory list is already mutated via domain methods
         }
     }
 }

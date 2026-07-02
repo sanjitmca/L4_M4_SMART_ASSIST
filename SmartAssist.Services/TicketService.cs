@@ -1,4 +1,4 @@
-﻿using SmartAssist.Domain.Common.Exceptions;
+using SmartAssist.Domain.Common.Exceptions;
 using SmartAssist.Domain.DTO;
 using SmartAssist.Domain.TicketManagement;
 using SmartAssist.Repository.Interfaces;
@@ -14,25 +14,19 @@ namespace SmartAssist.Services
         {
             _repository = repository;
         }
-
-        public async Task<TicketResponse> CreateTicketAsync(CreateTicketRequest request)
+        public TicketResponse CreateTicket(CreateTicketRequest request)
         {
-            // Validation: inline business rules — check input before creating domain entity
             var errors = new List<string>();
 
-            // Control flow: if/else guards — check each rule independently
             if (string.IsNullOrWhiteSpace(request.Title))
                 errors.Add("Title is required.");
 
-            // Nullable-aware: Title?.Length uses null-conditional operator
             if (request.Title?.Length > 200)
                 errors.Add("Title must not exceed 200 characters.");
 
             if (string.IsNullOrWhiteSpace(request.CreatedByUserId))
                 errors.Add("CreatedByUserId is required.");
 
-            // Exception handling: throw a typed domain exception, not a generic Exception.
-            // ValidationException carries the full error list so the caller can display them.
             if (errors.Count > 0)
                 throw new ValidationException(errors);
 
@@ -45,39 +39,32 @@ namespace SmartAssist.Services
                 subCategory:     request.SubCategory,
                 priority:        request.Priority);
 
-            await _repository.AddAsync(ticket);
+            _repository.Add(ticket);
 
             return TicketResponse.FromDomain(ticket);
         }
-
-        public async Task<TicketResponse?> GetTicketByIdAsync(int id)
+        public TicketResponse? GetTicketById(int id)
         {
-            var ticket = await _repository.GetAsync(id);
+            var ticket = _repository.Get(id);
 
-            // Nullable handling: null-conditional returns null instead of throwing
             return ticket is null ? null : TicketResponse.FromDomain(ticket);
         }
-
-        public async Task AssignTicketAsync(int ticketId, string engineerUserId)
+        public void AssignTicket(int ticketId, string engineerUserId)
         {
-            var ticket = await _repository.GetAsync(ticketId);
+            var ticket = _repository.Get(ticketId);
 
             if (ticket is null)
                 throw new NotFoundException(nameof(Ticket), ticketId);
 
-            // Control flow: guard clause — verify the business rule before proceeding
             if (ticket.Status != TicketStatus.New)
                 throw new BusinessRuleException(
                     $"Only a NEW ticket can be assigned. Current status: {ticket.Status}.");
-
             ticket.Assign(engineerUserId);
-
-            await _repository.UpdateAsync(ticket);
+            _repository.Update(ticket);
         }
-
-        public async Task ResolveTicketAsync(int id)
+        public void ResolveTicket(int id)
         {
-            var ticket = await _repository.GetAsync(id);
+            var ticket = _repository.Get(id);
 
             if (ticket is null)
                 throw new NotFoundException(nameof(Ticket), id);
@@ -87,12 +74,12 @@ namespace SmartAssist.Services
                     $"Only an ASSIGNED ticket can be resolved. Current status: {ticket.Status}.");
 
             ticket.Resolve();
-            await _repository.UpdateAsync(ticket);
+            _repository.Update(ticket);
         }
 
-        public async Task CloseTicketAsync(int id, int rating, string? feedback)
+        public void CloseTicket(int id, int rating, string? feedback)
         {
-            var ticket = await _repository.GetAsync(id);
+            var ticket = _repository.Get(id);
 
             if (ticket is null)
                 throw new NotFoundException(nameof(Ticket), id);
@@ -102,14 +89,12 @@ namespace SmartAssist.Services
                     $"Only a RESOLVED ticket can be closed. Current status: {ticket.Status}.");
 
             ticket.Close(rating, feedback);
-            await _repository.UpdateAsync(ticket);
+            _repository.Update(ticket);
         }
-
-        public async Task<List<TicketResponse>> GetTicketsAsync()
+        public List<TicketResponse> GetTickets()
         {
-            var tickets = await _repository.GetAllAsync();
+            var tickets = _repository.GetAll();
             return tickets.Select(TicketResponse.FromDomain).ToList();
         }
     }
 }
-

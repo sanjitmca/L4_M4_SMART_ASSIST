@@ -4,18 +4,11 @@ namespace SmartAssist.Services.Interfaces
 {
     public interface ITicketService
     {
-        // Task<TicketResponse>: async, returns a value — ticket was created
-        Task<TicketResponse> CreateTicketAsync(CreateTicketRequest request);
-
-        // Task<TicketResponse?>: nullable — ticket with that id may not exist
-        Task<TicketResponse?> GetTicketByIdAsync(int id);
-
-        // Task<List<TicketResponse>>: async, returns a collection of DTOs
-        Task<List<TicketResponse>> GetTicketsAsync();
-
-        // Task (no return): async write operations — result communicated via exception on failure
-        Task AssignTicketAsync(int ticketId, string engineerUserId);
-        Task ResolveTicketAsync(int id);
-        Task CloseTicketAsync(int id, int rating, string? feedback);
+        TicketResponse CreateTicket(CreateTicketRequest request);
+        TicketResponse? GetTicketById(int id);
+        List<TicketResponse> GetTickets();
+        void AssignTicket(int ticketId, string engineerUserId);
+        void ResolveTicket(int id);
+        void CloseTicket(int id, int rating, string? feedback);
     }
 }
